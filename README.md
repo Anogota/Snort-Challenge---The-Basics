@@ -75,3 +75,45 @@ Wynik:
 3.Pisanie reguł IDS (PNG)
 Task 1:Napisz regułę wykrywającą plik PNG w podanym pcap.
 Zbadaj logi i zidentyfikuj nazwę oprogramowania osadzonego w pakiecie.
+
+Napisalem taki skrypt aby mi to umożliwił.
+```alert tcp any any -> any any (msg:"PNG file detected"; flow:to_client,established; content:"|89 50 4E 47 0D 0A 1A 0A|"; offset:0; depth:8; sid:1000004; rev:1;)```
+Nastepnie użyłem tego polecenia: ```sudo snort -c local.rules -r ftp-png-gif.pcap -l .```
+I otrzymaliśmy plik snort i skorzystałem tutaj z polecenia sudo strings i możemy wyrażnie ujrzeć jaki jest to pogram
+
+![image](https://github.com/user-attachments/assets/abd63b84-3f50-4529-9b6f-893e3a9ad24e)
+
+Task 2: Napisz regułę wykrywającą plik GIF w podanym pcap.
+Tutaj użyliśmy podobnego polecenia: ```alert tcp any any -> any any (msg:"GIF file detected"; flow:to_client,established; content:"|47 49 46 38 39 61|"; offset:0; depth:6; nocase; sid:1000005; rev:1;)``` 
+
+I polecenia takie jak powyżej:
+
+![image](https://github.com/user-attachments/assets/7c88f50c-6188-454f-962d-fe62e8c02d99)
+
+4. Pisanie reguł IDS (metaplik torrent)
+
+Task 1:Napisz regułę wykrywającą metaplik torrenta w podanym pcap.
+Jaka jest liczba wykrytych pakietów?
+
+W tym przypadku skorzystaliśmy z takiego skryptu:
+```alert tcp any any <> any any (msg: ".torrent"; content:".torrent"; sid:1000001; rev:1;)``` użyliśmy polecenia ```sudo snort -r local.rules -r torrent.pcap -l .``` i dzięki temu otrzymaliśmy odpowiedź na nasze pytanie:
+
+![image](https://github.com/user-attachments/assets/f9d0d7b6-d7a6-4653-aba8-9ffa514cfa4d)
+
+Task 2:Jak nazywa się aplikacja torrentowa?
+Użyłem w tym przypadku polecenia: ```sudo strings torrent.pcap | grep "application"```
+Wynik poniżej: 
+
+![image](https://github.com/user-attachments/assets/86227885-dc1f-4ed8-a238-1c3ea89f4f7d)
+
+Task 3:Jaki jest typ MIME (Multipurpose Internet Mail Extensions) metapliku torrent?
+Możemy również to zobaczyć na rzucie ekranu powyżej: application/x-bittorrent
+
+Task 4:Jaka jest nazwa hosta metapliku torrent?
+Użylem polecenia ```sudo strings snort.log.1725379121```
+Wynik poniżej:
+
+![image](https://github.com/user-attachments/assets/052055a4-2f23-4379-9c98-5e00759748e2)
+
+
+
