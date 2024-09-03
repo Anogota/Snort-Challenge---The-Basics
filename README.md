@@ -115,5 +115,123 @@ Wynik poniżej:
 
 ![image](https://github.com/user-attachments/assets/052055a4-2f23-4379-9c98-5e00759748e2)
 
+5.Rozwiązywanie problemów z błędami składniowymi reguł
+
+Task 1:Możesz przetestować każdy zestaw reguł za pomocą następującej struktury poleceń;
+sudo snort -c local-X.rules -r mx-1.pcap -A console
+Napraw błąd składniowy w  pliku local-1.rules  i spraw, aby działał płynniej.
+Jaka jest liczba wykrytych pakietów?
+
+```
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+
+alert tcp any 3372 -> any any(msg: "Troubleshooting 1"; sid:1000001; rev:1;)
+```
+Nasz popsuty skrypt wygląda następujący, musimy rozwiązać problem aby działał i tak też będzie z każdym zadaniem w tej sekcji, będę zamieszczał skrypt który niedziała a następnie naprawiony :)
+
+```alert tcp any 3372 -> any any (msg: "Troubleshooting 1"; sid:1000001; rev:1;)``` - tak wygląda poprawiona wersja odpowiedź: 16
+
+
+Task 2:Jaka jest liczba wykrytych pakietów?
+
+```
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+
+alert icmp any -> any any (msg: "Troubleshooting 2"; sid:1000001; rev:1;)
+```
+
+Poprawiona wersja
+
+```alert icmp any any -> any any (msg: "Troubleshooting 2"; sid:1000001; rev:1;)``` - tak wygląda poprawiona wersja odpowiedź: 68
+
+Task 3: Jaka jest liczba wykrytych pakietów?
+
+```
+alert icmp any any -> any any (msg: "ICMP Packet Found"; sid:1000001; rev:1;)
+alert tcp any any -> any 80,443 (msg: "HTTPX Packet Found"; sid:1000001; rev:1;)
+```
+
+Poprawiona wersja:
+
+```
+alert icmp any any -> any any (msg: "ICMP Packet Found"; sid:1000001; rev:1;)
+alert tcp any any -> any 80,443 (msg: "HTTPX Packet Found"; sid:1000002; rev:1;)
+``` 
+Tak wygląda poprawiona wersja, wystarczyło podmienić sid, odpowiedź to: 87
+
+
+Task 4:Jaka jest liczba wykrytych pakietów?
+```
+alert icmp any any -> any any (msg: "ICMP Packet Found"; sid:1000001; rev:1;)
+alert tcp any 80,443 -> any any (msg: "HTTPX Packet Found": sid:1000002; rev:1;)
+```
+
+Poprawiona wersja:
+
+```
+alert icmp any any -> any any (msg: "ICMP Packet Found"; sid:1000001; rev:1;)
+alert tcp any 80,443 -> any any (msg: "HTTPX Packet Found"; sid:1000002; rev:1;)
+```
+
+Naprawdę trzeba być uważnym albo czytać dokładniej errory jakie wyrzuca :D
+
+Task 5:Jaka jest liczba wykrytych pakietów?
+
+```
+alert icmp any any <> any any (msg: "ICMP Packet Found"; sid:1000001; rev:1;)
+alert icmp any any <> any any (msg: "Inbound ICMP Packet Found"; sid;1000002; rev:1;)
+alert tcp any any -> any 80,443 (msg: "HTTPX Packet Found": sid:1000003; rev:1;)
+```
+
+Poprawiona wersja:
+
+```
+alert icmp any any <> any any (msg: "ICMP Packet Found"; sid:1000001; rev:1;)
+alert icmp any any <> any any (msg: "Inbound ICMP Packet Found"; sid:1000002; rev:1;)
+alert tcp any any -> any 80,443 (msg: "HTTPX Packet Found"; sid:1000003; rev:1;)
+```
+
+Odpowiedź to: 115
+
+Task 6:What is the number of the detected packets?
+
+```
+alert tcp any any <> any 80  (msg: "GET Request Found"; content:"|67 65 74|"; sid: 100001; rev:1;)
+```
+
+Odpwoeiedź: 2 wystarczy spojrzeć po UDP
+
+Task 7:Jak nazywa się wymagana opcja:
+Odpowiedź to msg 
+
+6.Korzystanie z reguł zewnętrznych (MS17-010)
+
+Task 1:Użyj podanego pliku reguł ( local.rules ), aby zbadać lukę w zabezpieczeniach ms1710.
+Jaka jest liczba wykrytych pakietów?
+
+Uzyłem ```snort -c local.rules -r ms-17-010.pcap -l .``` nastepnie użylem ```sudo snort -r snort.log.1725382985 | wc -l``` i otzymałem wynik: 25154
+
+Task 2:Użyj pustego pliku local-1.rules, aby   napisać nową regułę wykrywającą ładunki zawierające słowo kluczowe „ \IPC$ ”.
+Jaka jest liczba wykrytych pakietów?
+
+W tym przypadku napisałem taki skrypt: ```alert tcp any any -> any 445 (msg:"Potential SMB IPC$ access"; content:"|5C 49 50 43 24|"; sid:1000001; rev:1;)``` dzięki temu uzyskaliśmy odpowiedź: 12
+
+Task 3:Zbadaj  pliki dziennika/alarmu.
+Jaka jest żądana ścieżka? 
+
+Uzyłem polecenia ```sudo strings snort.log.1725383302``` - odpowiedzieć może znaleźć poniżej:
+
+![image](https://github.com/user-attachments/assets/341ad940-046b-49da-a515-9cc1c1fe472d)
+
+
+
 
 
